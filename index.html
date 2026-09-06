@@ -38,38 +38,99 @@ STEP 4-3
 * ●という「状態バッジ」の形式は共通化
 
 
-	あと、ここの仕組みど忘れしちゃった。どうして、 .card-price-line は表示非表示になるの？どうして今の状態でHTMLにはラインは表示されないの？　 display: inline-block;　指定だけど、　
+どっかに消えた原因はdisplay: none; にしてたのを忘れてたからだった。第１・２共通クラス .card-wrapper	 でそれぞれのバッジと画像を囲ってバッジのポジを指定した。
+これで一応STEP 4-3 のHTML/CSS は完了。だけど、新たな問題発生。
+それと、#depositModal の .deposit-selector-window の　.charge-badge のメインに「¥0」、サブに「¥3,500」がくっついて表示されるけど、これはJSの処理のせいかな？でもどこが原因なのかわからない。
+	
+#qrModal
+	    <div class="qr-card-selector-window">
+          <div class="qr-selector-item" data-change-type="main-card" onclick="switchCard(event)">
 
-	    <div class="card-info-side">
-            <img src="images/starbucks-logo.png" alt="ロゴ" class="mini-logo">
-            <div class="balance-display">
-
-              <!-- 💡☑️【ヒーロー】オートチャージ設定後テキスト/金額に下線 -->
-              <span class="summary-card-text">オートチャージ設定中</span> 
-
-              <p class="card-label">Starbucks Card</p>
-              <p class="card-price-line"><span class="unit">¥</span><span id="heroCardBalance">0</span></p>
+            <div class="card-wrapper">
+              <!-- 💡オートチャージが保存されたときの緑色の丸バッジ（第２と共通クラス） -->
+              <span class="charge-badge"></span>
+              <!-- カード画像 --> 
+              <img src="images/my-card-main.svg" alt="メインカード" class="qr-selector-card-img">
             </div>
-            
-            <button class="btn-etiket-trigger" onclick="flipCard(event)">
-              <div class="count-box">3</div>
-              <span class="eticket-label">eTicket</span>
-              <span class="eticket-badge"></span>
-            </button>
-          </div><!-- .card-info-side -->
+            <div class="qr-selector-card-info">
+              <span class="qr-selector-card-balance">¥0</span>
+            </div>
+          </div> 
+
+          <div class="qr-selector-item" data-change-type="sub-card" onclick="switchCard(event)">
+            <div class="card-wrapper">
+              <!-- 💡オートチャージが保存されたときの緑色の丸バッジ -->
+              <span class="charge-badge"></span>
+
+              <img src="images/my-card-sub.png" alt="サブカード" class="qr-selector-card-img">
+            </div>  
+            <div class="qr-selector-card-info">
+              <span class="qr-selector-card-balance">¥3,500</span>
+            </div>
+          </div> 
+
+#depositModal
+			<div class="deposit-menu-item">
+              <div class="menu-clickable-area" onclick="toggleDepositWindow('card', event)">
+
+                <div class="card-wrapper">
+                  <!-- 💡オートチャージが保存されたときの緑色の丸バッジ -->
+                  <span class="charge-badge"></span> 
+                  <!-- カードデザイン画像 -->
+                  <img src="images/my-card-main.svg" class="selector-card-img"  alt="メイン">
+                </div>
+         　　省略.....</div>	  
+				  
+
+			<div class="deposit-selector-window" id="depositCardWindow">
+                <div class="deposit-selector-item" onclick="selectDepositOption('card', 'main', event)">
+
+                  <div class="card-wrapper">
+                    <!-- 💡オートチャージが保存されたときの緑色の丸バッジ -->
+                    <span class="charge-badge"></span>
+                    <!-- カード画像 -->
+                    <img src="images/my-card-main.svg" class="selector-card-img" alt="メイン">
+                  </div>
+                  <span>¥0</span>
+                </div>
+
+                <div class="deposit-selector-item" onclick="selectDepositOption('card', 'sub', event)">
+                  <div class="card-wrapper">
+                    <!-- 💡オートチャージが保存されたときの緑色の丸バッジ -->
+                    <span class="charge-badge"></span>
+                    <!-- カード画像 -->
+                    <img src="images/my-card-sub.png" class="selector-card-img" alt="サブ">
+                  </div>
+                  <span>¥3,500</span>
+                </div>
+                
+              </div>	
 
 
-
-/* 金額の緑の下線 */
-/* ☑️ヒーロー */
-.card-price-line {
-    display: inline-block;
+/* カード画像のオートチャージ保存の目印バッジ */
+/* 第１・２共通 */
+.charge-badge {
+    position: absolute; 
+    top: -5px;
+    right: -5px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 1px solid #ffffff;
+    background-color: #00AF66;
+　　display: none; 
 }
-.card-price-line.is-active {
-    display: inline-block;
-    border-bottom: 0.5px solid #00AF66 ;
-    width: 150px;
+.charge-badge.is-active {
+    display: block;
 }
+
+/* バッジのポジション */
+.card-wrapper {
+    position: relative;
+    display: inline-block;
+}		
+
+	
 
 ==============================================================
 
