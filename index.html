@@ -37,30 +37,75 @@ STEP 4-3
 * 赤●＝eTicketあり
 * ●という「状態バッジ」の形式は共通化
 
-.qr-selector-item {
-    position: relative;
-}	
-.qr-balance-wrapper    /* カード選択：金額・トグル「V / ^」箱 */
-.qr-selector-item      /* カード選択のドロップダウン内：メイン・サブ各箱  */ 
-.qr-deposit-btn {      /* 入金ボタン */
-    -webkit-tap-highlight-color: transparent; /* タップ時の青い影 (iPhone用には今でもこれが必要) */
-    -webkit-user-select: none; /* iOS Safari,古いAndroid用 */ 
-    user-select: none;  /* これを書くとVSCodeの機嫌が治る */
+
+  このドロップダウンの横幅を狭めるには？
+
+              <div class="deposit-selector-window" id="depositCardWindow">
+                <div class="deposit-selector-item" onclick="selectDepositOption('card', 'main', event)">
+                  <!-- 💡オートチャージが保存されたときの緑色の丸バッジ -->
+                  <span class="charge-badge"></span>
+                 
+                  <img src="images/my-card-main.svg" class="selector-card-img" alt="メイン">
+                  <span>¥0</span>
+                </div>
+
+                <div class="deposit-selector-item" onclick="selectDepositOption('card', 'sub', event)">
+                  <!-- 💡オートチャージが保存されたときの緑色の丸バッジ -->
+                  <span class="charge-badge"></span>
+
+                  <img src="images/my-card-sub.png" class="selector-card-img" alt="サブ">
+                  <span>¥0</span>
+                </div>
+              </div>
+
+.deposit-selector-window {
+    position: absolute;
+    top: 50px;   /* メニューボタンの少し下に配置 */
+    left: 10px;
+    right: 10px;
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);   /* スタバ風の上品な影 */
+    
+    /* 開閉用のz-index（メニューの一覧より手前に出す） */
+    z-index: 10;
+
+    /* アニメーションの初期状態（透明で、少し下に下げておく） */
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
 }
-.qr-selector-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
+
+.deposit-selector-window.is-active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0); /* 定位置に戻る */
+}
+
+/* 別窓の中の選択肢（1行ずつ）の見た目 */
+.deposit-selector-item {
     padding: 12px 10px;
-    border-bottom: 1px solid #eee;
+    font-size: 15px;
+    color: #333333;
+    cursor: pointer;
+    border-bottom: 1px solid #f5f5f5;
 }
-.qr-selector-item:last-child {
+
+/* 最後の選択肢の線は消す */
+.deposit-selector-item:last-child {
     border-bottom: none;
 }
 
-.qr-selector-item:hover {
-    background-color: #eee;
-}	
+.selector-card-img {
+    width: 60px;
+    height: auto;
+    border-radius: 4px;
+    object-fit: contain; /* 画像が歪むのを防ぐ */
+}  
+
     
 ==============================================================
 
