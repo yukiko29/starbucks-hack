@@ -37,76 +37,69 @@ STEP 4-3
 * 赤●＝eTicketあり
 * ●という「状態バッジ」の形式は共通化
 
+.card-wrapper で囲って、
+.card-wrapper {
+    position: relative;
+}
+も追加したらカードの右端上にバッジを置けれたけど、#depositModal の　.charge-badge のバッジと一緒にメインに「¥0」サブに「¥3,500」が一緒に表示されるなんでだ？JSの処理の方が原因かな？
 
-  このドロップダウンの横幅を狭めるには？
+	#qrModal
+        <!-- カード選択のドロップダウン -->
+        <div class="qr-card-selector-window">
+          <div class="qr-selector-item" data-change-type="main-card" onclick="switchCard(event)">
 
+            <div class="card-wrapper">
+              <!-- 💡オートチャージが保存されたときの緑色の丸バッジ（第２と共通クラス） -->
+              <span class="charge-badge"></span>
+              <!-- カード画像 --> 
+              <img src="images/my-card-main.svg" alt="メインカード" class="qr-selector-card-img">
+            </div>
+            <div class="qr-selector-card-info">
+              <span class="qr-selector-card-balance">¥0</span>
+            </div>
+          </div> 
+
+          <div class="qr-selector-item" data-change-type="sub-card" onclick="switchCard(event)">
+            <div class="card-wrapper">
+              <!-- 💡オートチャージが保存されたときの緑色の丸バッジ -->
+              <span class="charge-badge"></span>
+
+              <img src="images/my-card-sub.png" alt="サブカード" class="qr-selector-card-img">
+            </div>  
+            <div class="qr-selector-card-info">
+              <span class="qr-selector-card-balance">¥3,500</span>
+            </div>
+          </div> 
+          
+          <!-- 必要に応じて追加 -->
+        </div><!-- .qr-card-selector-window -->   
+
+	
+        #depositModal
+	           <!-- カード選択のドロップダウン -->
               <div class="deposit-selector-window" id="depositCardWindow">
                 <div class="deposit-selector-item" onclick="selectDepositOption('card', 'main', event)">
-                  <!-- 💡オートチャージが保存されたときの緑色の丸バッジ -->
-                  <span class="charge-badge"></span>
-                 
-                  <img src="images/my-card-main.svg" class="selector-card-img" alt="メイン">
+                  <div class="card-wrapper">
+                    <!-- 💡オートチャージが保存されたときの緑色の丸バッジ -->
+                    <span class="charge-badge"></span>
+                    <!-- カード画像 -->
+                    <img src="images/my-card-main.svg" class="selector-card-img" alt="メイン">
+                  </div>
                   <span>¥0</span>
                 </div>
 
                 <div class="deposit-selector-item" onclick="selectDepositOption('card', 'sub', event)">
-                  <!-- 💡オートチャージが保存されたときの緑色の丸バッジ -->
-                  <span class="charge-badge"></span>
-
-                  <img src="images/my-card-sub.png" class="selector-card-img" alt="サブ">
-                  <span>¥0</span>
+                  <div class="card-wrapper">
+                    <!-- 💡オートチャージが保存されたときの緑色の丸バッジ -->
+                    <span class="charge-badge"></span>
+                    <!-- カード画像 -->
+                    <img src="images/my-card-sub.png" class="selector-card-img" alt="サブ">
+                  </div>
+                  <span>¥3,500</span>
                 </div>
               </div>
 
-.deposit-selector-window {
-    position: absolute;
-    top: 50px;   /* メニューボタンの少し下に配置 */
-    left: 10px;
-    right: 10px;
-    background-color: #ffffff;
-    border: 1px solid #ddd;
-    border-radius: 12px;
-    padding: 15px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);   /* スタバ風の上品な影 */
-    
-    /* 開閉用のz-index（メニューの一覧より手前に出す） */
-    z-index: 10;
 
-    /* アニメーションの初期状態（透明で、少し下に下げておく） */
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(10px);
-    transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
-}
-
-.deposit-selector-window.is-active {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0); /* 定位置に戻る */
-}
-
-/* 別窓の中の選択肢（1行ずつ）の見た目 */
-.deposit-selector-item {
-    padding: 12px 10px;
-    font-size: 15px;
-    color: #333333;
-    cursor: pointer;
-    border-bottom: 1px solid #f5f5f5;
-}
-
-/* 最後の選択肢の線は消す */
-.deposit-selector-item:last-child {
-    border-bottom: none;
-}
-
-.selector-card-img {
-    width: 60px;
-    height: auto;
-    border-radius: 4px;
-    object-fit: contain; /* 画像が歪むのを防ぐ */
-}  
-
-    
 ==============================================================
 
 	
