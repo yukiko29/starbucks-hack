@@ -100,6 +100,157 @@ STEP 4-3
               </div>
 
 
+
+	先にここも .card-wrapper .charge-badge を書き加えて CSS も同じ指定だけど、ここのバッジはカードの右端上に表示されずに画面右端にいる
+	.charge-badge {
+    position: absolute; 
+    top: -5px;
+    right: -5px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 1px solid #ffffff;
+    background-color: #00AF66;
+
+    /*あとで display: none; */
+}
+.charge-badge.is-active {
+    display: block;
+}
+
+/* バッジのポジション */
+.card-wrapper {
+    position: relative;
+}
+
+	
+親のこれが原因？
+
+/* 背景（オーバーレイ部分） */  
+.deposit-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* 薄い背景 */
+
+    /* 第1モーダル(9999)よりも大きい数値を指定、さらに手間に重ねる */
+    z-index: 10000;
+
+    /* 初期状態は非表示 */
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none; /* 【非表示時】手間の透明な壁をすり抜けさせる */  
+}
+/* 【第２モーダル表示時】閉経全体のフェードイン */
+.deposit-modal-overlay.is-active {
+    opacity: 1;
+    visibility: visible;
+    background-color: rgba(0, 0, 0, 0.4); /* 背景がじんわり黒い半透明に */
+    pointer-events: auto; /* 【表示時】クリック判定を有効に戻す */
+}
+/* 【第２モーダル表示時】中身のスライドイン */
+.deposit-modal-overlay.is-active .deposit-modal-content {
+    transform: translateY(0); /* 画面内に出現 */
+}
+	/* 【第２モーダル表示時】中身のスライドイン */
+.deposit-modal-overlay.is-active .deposit-modal-content {
+    transform: translateY(0); /* 画面内に出現 */
+}
+
+/* 【第２モーダル】の白いシートの連動(画面下からニョキッと生えるアニメーション) */
+.deposit-modal-content {
+    position: relative;
+    width: 100%;
+    min-height: calc(100vh - 80px); /* 画面の下から80%の高さまで覆うサイズ */
+    background-color: white;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    box-sizing: border-box;
+
+    /* 初期状態 : 画面の下(100%)にはみ出させて隠す */
+    transform: translateY(100%);
+    transition: transform 0.4s cubic-bezier(0.32, 0.94, 0.6, 1); /* スムーズなせり上がり */
+}
+
+	.deposit-screen-input.is-active {
+    display: block;
+　　 }
+	
+
+	
+ #depositModal
+　　<div id="depositModal" class="deposit-modal-overlay" onclick="closeDepositModal(event)">
+    <div class="deposit-modal-content">  
+
+      <!-- 【入金設定画面】 -->
+      <div class="deposit-screen-input">
+        
+        <!-- 【第２モーダル】ヘッダー（バツボタン）-->
+        <div class="deposit-modal-header">
+          <button class="deposit-close-btn" onclick="closeDepositModalForce()"> <!-- ※ CSSバツボタン実装・第１・３も共同？ -->
+            <span></span>
+            <span></span>
+          </button>
+        </div>    
+
+        <!-- body① -->
+        <div class="deposit-modal-body">
+
+          <!-- 【オートチャージ設定】リアルタイム更新バナー（初期状態は OFF） -->
+          <div class="autocharge-banner-container"> 
+
+            <!--  OFF 状態-->
+            <div class="banner-view-off">  
+              <p class="banner-title">オートチャージ</p>
+              <p class="banner-sub-title">カードの条件を設定</p>
+              <button class="autocharge-input-btn" onclick="openAutochargeModal(event)">設定する</button>
+            </div> 
+
+            <!-- ON 状態 ※ここの状態は executeAutochargeSave() から引き継ぐ？　--> 
+            <div class="banner-view-on">
+              <div class="banner-text">
+                <p class="banner-title">オートチャージ</p> 
+                <p class="autocharge-summary">オートチャージ：¥2,000 入金条件：残高が¥1,000未満</p>
+
+                <!-- 💡ここにオートチャージ指定されたカード画像/名前追加 -->
+                <!-- オートチャージ保存されたカード画像/名前 --> 
+                <img src="images/my-card-main.svg" class="summary-card-pin" alt="Starbucks Card">
+                <span class="summary-card-name">Starbucks Card</span>
+              </div>
+
+              <!-- ON 状態スイッチ（OFF 状態に戻す：turnOffAutocharge()） -->
+              <button class="autocharge-switch" onclick="turnOffAutocharge(event)">
+                <span class="autocharge-switch-circle"></span>
+              </button> 
+            </div>  
+          </div>   
+
+
+          <!-- 【第２モーダル】各種設定メニュー一覧 -->
+          <div class="deposit-menu-list">
+          
+	
+	        <!-- 1. 「カード選択」 -->
+            <div class="deposit-menu-item">
+              <div class="menu-clickable-area" onclick="toggleDepositWindow('card', event)">
+
+				<!-- ここ追加 -->  
+                <div class="card-wrapper">
+                  <!-- 💡オートチャージが保存されたときの緑色の丸バッジ -->
+                  <span class="charge-badge"></span> 
+                  <!-- カードデザイン画像 -->
+                  <img src="images/my-card-main.svg" class="selector-card-img"  alt="メイン">
+                </div>
+
+                <div class="menu-value-box">
+                  <span class="current-value" id="depositCardVal">Starbucks Card ¥00,000</span>
+                  <span class="arrow-balance"></span> 
+                </div>
+              </div>
+
+
 ==============================================================
 
 	
