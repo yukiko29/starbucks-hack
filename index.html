@@ -37,219 +37,39 @@ STEP 4-3
 * 赤●＝eTicketあり
 * ●という「状態バッジ」の形式は共通化
 
-.card-wrapper で囲って、
-.card-wrapper {
-    position: relative;
-}
-も追加したらカードの右端上にバッジを置けれたけど、#depositModal の　.charge-badge のバッジと一緒にメインに「¥0」サブに「¥3,500」が一緒に表示されるなんでだ？JSの処理の方が原因かな？
 
-	#qrModal
-        <!-- カード選択のドロップダウン -->
-        <div class="qr-card-selector-window">
-          <div class="qr-selector-item" data-change-type="main-card" onclick="switchCard(event)">
+	あと、ここの仕組みど忘れしちゃった。どうして、 .card-price-line は表示非表示になるの？どうして今の状態でHTMLにはラインは表示されないの？　 display: inline-block;　指定だけど、　
 
-            <div class="card-wrapper">
-              <!-- 💡オートチャージが保存されたときの緑色の丸バッジ（第２と共通クラス） -->
-              <span class="charge-badge"></span>
-              <!-- カード画像 --> 
-              <img src="images/my-card-main.svg" alt="メインカード" class="qr-selector-card-img">
+	    <div class="card-info-side">
+            <img src="images/starbucks-logo.png" alt="ロゴ" class="mini-logo">
+            <div class="balance-display">
+
+              <!-- 💡☑️【ヒーロー】オートチャージ設定後テキスト/金額に下線 -->
+              <span class="summary-card-text">オートチャージ設定中</span> 
+
+              <p class="card-label">Starbucks Card</p>
+              <p class="card-price-line"><span class="unit">¥</span><span id="heroCardBalance">0</span></p>
             </div>
-            <div class="qr-selector-card-info">
-              <span class="qr-selector-card-balance">¥0</span>
-            </div>
-          </div> 
-
-          <div class="qr-selector-item" data-change-type="sub-card" onclick="switchCard(event)">
-            <div class="card-wrapper">
-              <!-- 💡オートチャージが保存されたときの緑色の丸バッジ -->
-              <span class="charge-badge"></span>
-
-              <img src="images/my-card-sub.png" alt="サブカード" class="qr-selector-card-img">
-            </div>  
-            <div class="qr-selector-card-info">
-              <span class="qr-selector-card-balance">¥3,500</span>
-            </div>
-          </div> 
-          
-          <!-- 必要に応じて追加 -->
-        </div><!-- .qr-card-selector-window -->   
-
-	
-        #depositModal
-	           <!-- カード選択のドロップダウン -->
-              <div class="deposit-selector-window" id="depositCardWindow">
-                <div class="deposit-selector-item" onclick="selectDepositOption('card', 'main', event)">
-                  <div class="card-wrapper">
-                    <!-- 💡オートチャージが保存されたときの緑色の丸バッジ -->
-                    <span class="charge-badge"></span>
-                    <!-- カード画像 -->
-                    <img src="images/my-card-main.svg" class="selector-card-img" alt="メイン">
-                  </div>
-                  <span>¥0</span>
-                </div>
-
-                <div class="deposit-selector-item" onclick="selectDepositOption('card', 'sub', event)">
-                  <div class="card-wrapper">
-                    <!-- 💡オートチャージが保存されたときの緑色の丸バッジ -->
-                    <span class="charge-badge"></span>
-                    <!-- カード画像 -->
-                    <img src="images/my-card-sub.png" class="selector-card-img" alt="サブ">
-                  </div>
-                  <span>¥3,500</span>
-                </div>
-              </div>
+            
+            <button class="btn-etiket-trigger" onclick="flipCard(event)">
+              <div class="count-box">3</div>
+              <span class="eticket-label">eTicket</span>
+              <span class="eticket-badge"></span>
+            </button>
+          </div><!-- .card-info-side -->
 
 
 
-	先にここも .card-wrapper .charge-badge を書き加えて CSS も同じ指定だけど、ここのバッジはカードの右端上に表示されずに画面右端にいる
-	.charge-badge {
-    position: absolute; 
-    top: -5px;
-    right: -5px;
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    border: 1px solid #ffffff;
-    background-color: #00AF66;
-
-    /*あとで display: none; */
+/* 金額の緑の下線 */
+/* ☑️ヒーロー */
+.card-price-line {
+    display: inline-block;
 }
-.charge-badge.is-active {
-    display: block;
+.card-price-line.is-active {
+    display: inline-block;
+    border-bottom: 0.5px solid #00AF66 ;
+    width: 150px;
 }
-
-/* バッジのポジション */
-.card-wrapper {
-    position: relative;
-}
-
-	
-親のこれが原因？
-
-/* 背景（オーバーレイ部分） */  
-.deposit-modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5); /* 薄い背景 */
-
-    /* 第1モーダル(9999)よりも大きい数値を指定、さらに手間に重ねる */
-    z-index: 10000;
-
-    /* 初期状態は非表示 */
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none; /* 【非表示時】手間の透明な壁をすり抜けさせる */  
-}
-/* 【第２モーダル表示時】閉経全体のフェードイン */
-.deposit-modal-overlay.is-active {
-    opacity: 1;
-    visibility: visible;
-    background-color: rgba(0, 0, 0, 0.4); /* 背景がじんわり黒い半透明に */
-    pointer-events: auto; /* 【表示時】クリック判定を有効に戻す */
-}
-/* 【第２モーダル表示時】中身のスライドイン */
-.deposit-modal-overlay.is-active .deposit-modal-content {
-    transform: translateY(0); /* 画面内に出現 */
-}
-	/* 【第２モーダル表示時】中身のスライドイン */
-.deposit-modal-overlay.is-active .deposit-modal-content {
-    transform: translateY(0); /* 画面内に出現 */
-}
-
-/* 【第２モーダル】の白いシートの連動(画面下からニョキッと生えるアニメーション) */
-.deposit-modal-content {
-    position: relative;
-    width: 100%;
-    min-height: calc(100vh - 80px); /* 画面の下から80%の高さまで覆うサイズ */
-    background-color: white;
-    border-top-left-radius: 20px;
-    border-top-right-radius: 20px;
-    box-sizing: border-box;
-
-    /* 初期状態 : 画面の下(100%)にはみ出させて隠す */
-    transform: translateY(100%);
-    transition: transform 0.4s cubic-bezier(0.32, 0.94, 0.6, 1); /* スムーズなせり上がり */
-}
-
-	.deposit-screen-input.is-active {
-    display: block;
-　　 }
-	
-
-	
- #depositModal
-　　<div id="depositModal" class="deposit-modal-overlay" onclick="closeDepositModal(event)">
-    <div class="deposit-modal-content">  
-
-      <!-- 【入金設定画面】 -->
-      <div class="deposit-screen-input">
-        
-        <!-- 【第２モーダル】ヘッダー（バツボタン）-->
-        <div class="deposit-modal-header">
-          <button class="deposit-close-btn" onclick="closeDepositModalForce()"> <!-- ※ CSSバツボタン実装・第１・３も共同？ -->
-            <span></span>
-            <span></span>
-          </button>
-        </div>    
-
-        <!-- body① -->
-        <div class="deposit-modal-body">
-
-          <!-- 【オートチャージ設定】リアルタイム更新バナー（初期状態は OFF） -->
-          <div class="autocharge-banner-container"> 
-
-            <!--  OFF 状態-->
-            <div class="banner-view-off">  
-              <p class="banner-title">オートチャージ</p>
-              <p class="banner-sub-title">カードの条件を設定</p>
-              <button class="autocharge-input-btn" onclick="openAutochargeModal(event)">設定する</button>
-            </div> 
-
-            <!-- ON 状態 ※ここの状態は executeAutochargeSave() から引き継ぐ？　--> 
-            <div class="banner-view-on">
-              <div class="banner-text">
-                <p class="banner-title">オートチャージ</p> 
-                <p class="autocharge-summary">オートチャージ：¥2,000 入金条件：残高が¥1,000未満</p>
-
-                <!-- 💡ここにオートチャージ指定されたカード画像/名前追加 -->
-                <!-- オートチャージ保存されたカード画像/名前 --> 
-                <img src="images/my-card-main.svg" class="summary-card-pin" alt="Starbucks Card">
-                <span class="summary-card-name">Starbucks Card</span>
-              </div>
-
-              <!-- ON 状態スイッチ（OFF 状態に戻す：turnOffAutocharge()） -->
-              <button class="autocharge-switch" onclick="turnOffAutocharge(event)">
-                <span class="autocharge-switch-circle"></span>
-              </button> 
-            </div>  
-          </div>   
-
-
-          <!-- 【第２モーダル】各種設定メニュー一覧 -->
-          <div class="deposit-menu-list">
-          
-	
-	        <!-- 1. 「カード選択」 -->
-            <div class="deposit-menu-item">
-              <div class="menu-clickable-area" onclick="toggleDepositWindow('card', event)">
-
-				<!-- ここ追加 -->  
-                <div class="card-wrapper">
-                  <!-- 💡オートチャージが保存されたときの緑色の丸バッジ -->
-                  <span class="charge-badge"></span> 
-                  <!-- カードデザイン画像 -->
-                  <img src="images/my-card-main.svg" class="selector-card-img"  alt="メイン">
-                </div>
-
-                <div class="menu-value-box">
-                  <span class="current-value" id="depositCardVal">Starbucks Card ¥00,000</span>
-                  <span class="arrow-balance"></span> 
-                </div>
-              </div>
-
 
 ==============================================================
 
